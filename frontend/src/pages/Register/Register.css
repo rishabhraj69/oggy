@@ -1,0 +1,232 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+.register-page {
+  min-height: 100vh;
+  padding: 45px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, rgba(239, 68, 68, 0.08), transparent 35%),
+    #f5f7fb;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 540px;
+  padding: 38px;
+  background: #fff;
+  border: 1px solid #e9edf3;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
+.register-logo {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  border-radius: 14px;
+  font-size: 25px;
+}
+
+.register-label {
+  margin: 22px 0 8px;
+  color: #ef4444;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.register-card h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.register-subtitle {
+  margin: 10px 0 24px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.register-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 5px;
+  margin-bottom: 25px;
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.register-tabs button {
+  padding: 12px;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.register-tabs button.active {
+  color: #dc2626;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.register-section-title {
+  margin: 25px 0 15px;
+  padding-bottom: 10px;
+  color: #111827;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.register-field {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 17px;
+}
+
+.register-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.register-field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  color: #111827;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.register-field input:focus {
+  background: #fff;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+}
+
+.register-row {
+  display: flex;
+  gap: 14px;
+}
+
+.register-error,
+.register-success {
+  margin: 14px 0;
+  padding: 12px 14px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.register-error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.register-success {
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.register-submit {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 8px;
+  padding: 13px;
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.register-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(239, 68, 68, 0.2);
+}
+
+.register-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.register-login-link {
+  margin: 22px 0 12px;
+  color: #6b7280;
+  text-align: center;
+  font-size: 12px;
+}
+
+.register-login-link button {
+  padding: 0;
+  color: #dc2626;
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.register-back {
+  width: 100%;
+  padding: 12px;
+  color: #4b5563;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.register-back:hover {
+  background: #f9fafb;
+}
+
+@media (max-width: 550px) {
+  .register-page {
+    padding: 20px 12px;
+  }
+
+  .register-card {
+    padding: 25px 20px;
+  }
+
+  .register-card h1 {
+    font-size: 23px;
+  }
+
+  .register-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

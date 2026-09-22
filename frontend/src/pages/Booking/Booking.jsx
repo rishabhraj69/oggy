@@ -3,6 +3,8 @@ import { useState } from "react";
 import "./Booking.css";
 
 const PHONE_NUMBER = "+91 96995 26233";
+const PHONE_LINK = "tel:+919699526233";
+const GARAGE_OWNER = "Rehan";
 
 const truckBrands = [
   "TATA",
@@ -30,115 +32,98 @@ const services = [
     id: "battery",
     icon: "🔋",
     title: "Battery / Starting Problem",
-    description:
-      "Vehicle is not starting or battery is weak",
+    description: "Vehicle is not starting or battery is weak",
   },
   {
     id: "tyre",
     icon: "🛞",
     title: "Tyre / Puncture",
-    description:
-      "Flat tyre or tyre-related problem",
+    description: "Flat tyre or tyre-related problem",
   },
   {
     id: "breakdown",
     icon: "🔧",
     title: "Vehicle Breakdown",
-    description:
-      "Vehicle stopped working on the road",
+    description: "Vehicle stopped working on the road",
   },
   {
     id: "towing",
     icon: "🚚",
     title: "Towing Assistance",
-    description:
-      "Vehicle needs to be towed",
+    description: "Vehicle needs to be towed",
   },
   {
     id: "electrical",
     icon: "⚡",
     title: "Electrical Problem",
-    description:
-      "Lights, wiring or electrical issue",
+    description: "Lights, wiring or electrical issue",
   },
   {
     id: "other",
     icon: "🛠️",
     title: "Other Assistance",
-    description:
-      "Something else is wrong",
+    description: "Something else is wrong",
   },
 ];
+
+function getSavedLocation() {
+  try {
+    const data = localStorage.getItem("oggyGarageLocation");
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error("Unable to read saved location:", error);
+    return null;
+  }
+}
 
 function Booking() {
   const navigate = useNavigate();
   const routerLocation = useLocation();
 
-  /*
-    Location can come from:
-    1. Home.jsx through React Router state
-    2. localStorage as backup
-  */
-
-  const savedLocation = (() => {
-    try {
-      const data = localStorage.getItem(
-        "oggyGarageLocation"
-      );
-
-      return data ? JSON.parse(data) : null;
-    } catch {
-      return null;
-    }
-  })();
+  const savedLocation = getSavedLocation();
 
   const locationData =
-    routerLocation.state?.location ||
-    savedLocation ||
-    null;
+    routerLocation.state?.location || savedLocation || null;
 
-  const [vehicleType, setVehicleType] =
-    useState("");
+  const [vehicleType, setVehicleType] = useState("");
+  const [voltage, setVoltage] = useState("");
+  const [vehicleBrand, setVehicleBrand] = useState("");
+  const [service, setService] = useState("");
 
-  const [voltage, setVoltage] =
-    useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [notes, setNotes] = useState("");
 
-  const [vehicleBrand, setVehicleBrand] =
-    useState("");
-
-  const [service, setService] =
-    useState("");
-
-  const [customerName, setCustomerName] =
-    useState("");
-
-  const [phone, setPhone] =
-    useState("");
-
-  const [notes, setNotes] =
-    useState("");
-
-  const [submitted, setSubmitted] =
-    useState(false);
-
-  const [bookingId, setBookingId] =
-    useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [bookingId, setBookingId] = useState("");
 
   const availableBrands =
     vehicleType === "truck"
       ? truckBrands
-      : carBrands;
+      : vehicleType === "car"
+        ? carBrands
+        : [];
+
+  const customerMapUrl =
+    locationData?.latitude != null &&
+    locationData?.longitude != null
+      ? `https://www.google.com/maps?q=${locationData.latitude},${locationData.longitude}`
+      : locationData?.address
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            locationData.address
+          )}`
+        : null;
 
   const handleVehicleTypeChange = (type) => {
     setVehicleType(type);
 
-    setVoltage("");
-    setVehicleBrand("");
-    setService("");
-  };
-
-  const handleVoltageChange = (selectedVoltage) => {
-    setVoltage(selectedVoltage);
+    if (type === "car") {
+      setVoltage("12V");
+    } else if (type === "truck") {
+      setVoltage("24V");
+    } else {
+      setVoltage("");
+    }
 
     setVehicleBrand("");
     setService("");
@@ -148,833 +133,577 @@ function Booking() {
     e.preventDefault();
 
     if (!locationData?.address) {
-      alert(
-        "Please select your location from the Home page first."
-      );
-
+      alert("Please select your location from the Home page first.");
       navigate("/");
       return;
     }
 
     if (!vehicleType) {
-      alert(
-        "Please select your vehicle type."
-      );
+      alert("Please select your vehicle type.");
       return;
     }
 
-    if (!voltage) {
-      alert(
-        "Please select 12V or 24V."
-      );
+    const correctVoltage =
+      vehicleType === "car"
+        ? "12V"
+        : vehicleType === "truck"
+          ? "24V"
+          : "";
+
+    if (voltage !== correctVoltage) {
+      alert("Invalid voltage for the selected vehicle.");
       return;
     }
 
     if (!vehicleBrand) {
-      alert(
-        "Please select your vehicle brand."
-      );
+      alert("Please select your vehicle brand.");
       return;
     }
 
     if (!service) {
-      alert(
-        "Please select the problem you are facing."
-      );
+      alert("Please select the problem you are facing.");
       return;
     }
 
     if (!customerName.trim()) {
-      alert(
-        "Please enter your name."
-      );
+      alert("Please enter your name.");
       return;
     }
 
     if (!/^[6-9]\d{9}$/.test(phone)) {
-      alert(
-        "Please enter a valid 10-digit Indian mobile number."
-      );
+      alert("Please enter a valid 10-digit Indian mobile number.");
       return;
     }
 
     const newBookingId =
-      "OGG-" +
-      Math.floor(
-        100000 +
-          Math.random() * 900000
-      );
+      "DM-" + Math.floor(100000 + Math.random() * 900000);
 
-    const selectedService =
-      services.find(
-        (item) => item.id === service
-      );
+    const selectedService = services.find(
+      (item) => item.id === service
+    );
 
     const booking = {
       bookingId: newBookingId,
 
       location: locationData.address,
-
-      latitude:
-        locationData.latitude ?? null,
-
-      longitude:
-        locationData.longitude ?? null,
+      latitude: locationData.latitude ?? null,
+      longitude: locationData.longitude ?? null,
+      locationMapUrl: customerMapUrl,
 
       vehicleType,
-
       vehicleTypeLabel:
-        vehicleType === "truck"
-          ? "Commercial Vehicle"
-          : "Car",
+        vehicleType === "truck" ? "Commercial Vehicle" : "Car",
 
       voltage,
-
       vehicleBrand,
 
       service,
+      serviceLabel: selectedService?.title || service,
 
-      serviceLabel:
-        selectedService?.title ||
-        service,
-
-      customerName:
-        customerName.trim(),
-
+      customerName: customerName.trim(),
       phone,
-
-      notes:
-        notes.trim(),
+      notes: notes.trim(),
 
       status: "Pending",
-
-      createdAt:
-        new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     };
 
-    const existingBookings =
-      JSON.parse(
-        localStorage.getItem(
-          "oggyBookings"
-        )
-      ) || [];
+    let existingBookings = [];
 
-    const updatedBookings = [
-      ...existingBookings,
-      booking,
-    ];
+    try {
+      const storedBookings = localStorage.getItem("oggyBookings");
 
-    localStorage.setItem(
-      "oggyBookings",
-      JSON.stringify(
-        updatedBookings
-      )
-    );
+      existingBookings = storedBookings
+        ? JSON.parse(storedBookings)
+        : [];
 
-    setBookingId(
-      newBookingId
-    );
+      if (!Array.isArray(existingBookings)) {
+        existingBookings = [];
+      }
+    } catch (error) {
+      console.error("Unable to read bookings:", error);
+      existingBookings = [];
+    }
 
+    const updatedBookings = [...existingBookings, booking];
+
+    try {
+      localStorage.setItem(
+        "oggyBookings",
+        JSON.stringify(updatedBookings)
+      );
+    } catch (error) {
+      console.error("Unable to save booking:", error);
+      alert("Unable to save your booking. Please try again.");
+      return;
+    }
+
+    setBookingId(newBookingId);
     setSubmitted(true);
   };
 
-  /*
-    CONFIRMATION SCREEN
-  */
+  // Reusable centered brand footer
+  const BrandFooter = () => (
+    <footer
+      className="booking-brand-footer"
+      style={{
+        width: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        gap: "8px",
+        padding: "30px 20px",
+        margin: "35px auto 0",
+        borderTop: "1px solid #e2e8f0",
+      }}
+    >
+      <strong
+        style={{
+          display: "block",
+          color: "#111827",
+          fontSize: "22px",
+          fontWeight: 800,
+          letterSpacing: "1.5px",
+          lineHeight: 1.3,
+        }}
+      >
+        DOCTOR MOTORS
+      </strong>
+
+      <span
+        style={{
+          display: "block",
+          color: "#ef4444",
+          fontSize: "15px",
+          fontWeight: 600,
+          lineHeight: 1.5,
+        }}
+      >
+        Personal Doctor of Your Vehicle
+      </span>
+
+      <small
+        style={{
+          display: "block",
+          color: "#64748b",
+          fontSize: "13px",
+          lineHeight: 1.5,
+        }}
+      >
+        Owned by {GARAGE_OWNER}
+      </small>
+    </footer>
+  );
+
+  // ==============================
+  // CONFIRMATION SCREEN
+  // ==============================
 
   if (submitted) {
     return (
       <div className="booking-page">
-
         <header className="booking-header">
-
           <button
+            type="button"
             className="brand-button"
-            onClick={() =>
-              navigate("/")
-            }
+            onClick={() => navigate("/")}
           >
-            <div className="brand-logo">
-              OG
-            </div>
+            <div className="brand-logo">DM</div>
 
             <div>
-              <strong>
-                Oggy
-              </strong>
-
-              <span>
-                Garage
-              </span>
+              <strong>Doctor</strong>
+              <span>Motors</span>
             </div>
           </button>
 
-          <a
-            href="tel:+919699526233"
-            className="header-call"
-          >
+          <a href={PHONE_LINK} className="header-call">
             ☎ {PHONE_NUMBER}
           </a>
-
         </header>
 
         <div className="confirmation-wrapper">
-
           <div className="confirmation-card">
+            <div className="success-icon">✓</div>
 
-            <div className="success-icon">
-              ✓
-            </div>
-
-            <p className="success-label">
-              BOOKING REQUEST SENT
-            </p>
+            <p className="success-label">BOOKING REQUEST SENT</p>
 
             <h1>
-              Help is{" "}
-              <span>
-                on the way.
-              </span>
+              Help is <span>on the way.</span>
             </h1>
 
             <p className="confirmation-text">
-              Your roadside assistance
-              request has been received.
-              Our team will contact you
-              shortly.
+              Your roadside assistance request has been received.
+              Our team will contact you shortly.
             </p>
 
             <div className="booking-id-box">
-
-              <span>
-                Booking ID
-              </span>
-
-              <strong>
-                {bookingId}
-              </strong>
-
+              <span>Booking ID</span>
+              <strong>{bookingId}</strong>
             </div>
 
             <div className="confirmation-details">
-
               <div>
-                <small>
-                  Location
-                </small>
+                <small>Location</small>
+                <strong>{locationData.address}</strong>
 
-                <strong>
-                  {locationData.address}
-                </strong>
+                {customerMapUrl && (
+                  <a
+                    href={customerMapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    📍 View location on map
+                  </a>
+                )}
               </div>
 
               <div>
-                <small>
-                  Vehicle
-                </small>
-
+                <small>Vehicle</small>
                 <strong>
                   {vehicleBrand} ·{" "}
-                  {vehicleType ===
-                  "truck"
+                  {vehicleType === "truck"
                     ? "Commercial Vehicle"
                     : "Car"}
                 </strong>
               </div>
 
               <div>
-                <small>
-                  Electrical System
-                </small>
-
-                <strong>
-                  {voltage}
-                </strong>
+                <small>Electrical System</small>
+                <strong>{voltage}</strong>
               </div>
 
               <div>
-                <small>
-                  Assistance
-                </small>
-
+                <small>Assistance</small>
                 <strong>
-                  {
-                    services.find(
-                      (item) =>
-                        item.id ===
-                        service
-                    )?.title
-                  }
+                  {services.find((item) => item.id === service)?.title}
                 </strong>
               </div>
-
             </div>
 
             <div className="call-box">
-
-              <div className="call-icon">
-                ☎
-              </div>
+              <div className="call-icon">☎</div>
 
               <div>
-
-                <span>
-                  Need immediate help?
-                </span>
-
-                <a href="tel:+919699526233">
-                  {PHONE_NUMBER}
-                </a>
-
+                <span>Need immediate help?</span>
+                <a href={PHONE_LINK}>{PHONE_NUMBER}</a>
               </div>
-
             </div>
 
             <button
+              type="button"
               className="back-home-button"
-              onClick={() =>
-                navigate("/")
-              }
+              onClick={() => navigate("/")}
             >
               Back to Home
             </button>
 
+            <p className="privacy-note">
+              Personal Doctor of Your Vehicle
+            </p>
+
+            <BrandFooter />
           </div>
-
         </div>
-
       </div>
     );
   }
 
-  /*
-    BOOKING FORM
-  */
+  // ==============================
+  // BOOKING FORM
+  // ==============================
 
   return (
     <div className="booking-page">
-
-      {/* HEADER */}
-
       <header className="booking-header">
-
         <button
+          type="button"
           className="brand-button"
-          onClick={() =>
-            navigate("/")
-          }
+          onClick={() => navigate("/")}
         >
-          <div className="brand-logo">
-            OG
-          </div>
+          <div className="brand-logo">DM</div>
 
           <div>
-            <strong>
-              Oggy
-            </strong>
-
-            <span>
-              Garage
-            </span>
+            <strong>Doctor</strong>
+            <span>Motors</span>
           </div>
         </button>
 
-        <a
-          href="tel:+919699526233"
-          className="header-call"
-        >
+        <a href={PHONE_LINK} className="header-call">
           ☎ {PHONE_NUMBER}
         </a>
-
       </header>
 
-      {/* MAIN */}
-
       <main className="booking-container">
-
         <div className="booking-top">
-
           <button
+            type="button"
             className="back-button"
-            onClick={() =>
-              navigate(-1)
-            }
+            onClick={() => navigate(-1)}
           >
             ← Back
           </button>
 
           <p className="booking-label">
-            ROADSIDE ASSISTANCE
+            DOCTOR MOTORS · ROADSIDE ASSISTANCE
           </p>
 
           <h1>
-            Tell us what{" "}
-            <span>
-              you need.
-            </span>
+            Tell us what <span>you need.</span>
           </h1>
 
           <p>
-            Fill in a few details and
-            our team will come to your
+            Fill in a few details and our team will come to your
             location.
           </p>
-
         </div>
 
-        <form
-          className="booking-form"
-          onSubmit={handleSubmit}
-        >
-
+        <form className="booking-form" onSubmit={handleSubmit}>
           {/* LOCATION */}
 
           <section className="form-section">
-
             <div className="section-heading">
-
-              <div className="section-number">
-                1
-              </div>
+              <div className="section-number">1</div>
 
               <div>
-                <h2>
-                  Your location
-                </h2>
-
-                <p>
-                  This is where our
-                  assistance team will come.
-                </p>
+                <h2>Your location</h2>
+                <p>This is where our assistance team will come.</p>
               </div>
-
             </div>
 
             <div className="location-display">
-
-              <div className="location-pin">
-                📍
-              </div>
+              <div className="location-pin">📍</div>
 
               <div>
-
-                <small>
-                  Selected location
-                </small>
+                <small>Selected location</small>
 
                 <strong>
-                  {locationData?.address ||
-                    "No location selected"}
+                  {locationData?.address || "No location selected"}
                 </strong>
 
-                {locationData?.latitude !=
-                  null &&
-                  locationData?.longitude !=
-                    null && (
-                    <span>
-                      ✓ GPS location captured
-                    </span>
+                {locationData?.latitude != null &&
+                  locationData?.longitude != null && (
+                    <span>✓ GPS location captured</span>
                   )}
 
+                {customerMapUrl && (
+                  <a
+                    href={customerMapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="location-map-link"
+                  >
+                    📍 View exact location on Google Maps →
+                  </a>
+                )}
               </div>
-
             </div>
 
             {!locationData?.address && (
               <button
                 type="button"
                 className="back-home-button"
-                style={{
-                  marginTop: "15px",
-                }}
-                onClick={() =>
-                  navigate("/")
-                }
+                style={{ marginTop: "15px" }}
+                onClick={() => navigate("/")}
               >
                 Select Location
               </button>
             )}
-
           </section>
 
-          {/* VEHICLE */}
+          {/* VEHICLE TYPE */}
 
           <section className="form-section">
-
             <div className="section-heading">
-
-              <div className="section-number">
-                2
-              </div>
+              <div className="section-number">2</div>
 
               <div>
-                <h2>
-                  What vehicle do you have?
-                </h2>
-
-                <p>
-                  Select your vehicle type.
-                </p>
+                <h2>What vehicle do you have?</h2>
+                <p>Select your vehicle type.</p>
               </div>
-
             </div>
 
             <div className="vehicle-options">
+              <button
+                type="button"
+                className={`vehicle-card ${
+                  vehicleType === "car" ? "selected" : ""
+                }`}
+                onClick={() => handleVehicleTypeChange("car")}
+              >
+                <div className="vehicle-icon">🚗</div>
 
-              {/* CAR */}
+                <div>
+                  <strong>Car</strong>
+                  <span>Passenger vehicles · 12V only</span>
+                </div>
+
+                {vehicleType === "car" && (
+                  <div className="selected-check">✓</div>
+                )}
+              </button>
 
               <button
                 type="button"
                 className={`vehicle-card ${
-                  vehicleType ===
-                  "car"
-                    ? "selected"
-                    : ""
+                  vehicleType === "truck" ? "selected" : ""
                 }`}
-                onClick={() =>
-                  handleVehicleTypeChange(
-                    "car"
-                  )
-                }
+                onClick={() => handleVehicleTypeChange("truck")}
               >
-
-                <div className="vehicle-icon">
-                  🚗
-                </div>
+                <div className="vehicle-icon">🚚</div>
 
                 <div>
-                  <strong>
-                    Car
-                  </strong>
-
-                  <span>
-                    Passenger vehicles
-                  </span>
+                  <strong>Truck / Commercial</strong>
+                  <span>Commercial vehicles · 24V only</span>
                 </div>
 
-                {vehicleType ===
-                  "car" && (
-                  <div className="selected-check">
-                    ✓
-                  </div>
+                {vehicleType === "truck" && (
+                  <div className="selected-check">✓</div>
                 )}
-
               </button>
-
-              {/* TRUCK */}
-
-              <button
-                type="button"
-                className={`vehicle-card ${
-                  vehicleType ===
-                  "truck"
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() =>
-                  handleVehicleTypeChange(
-                    "truck"
-                  )
-                }
-              >
-
-                <div className="vehicle-icon">
-                  🚚
-                </div>
-
-                <div>
-                  <strong>
-                    Truck / Commercial
-                  </strong>
-
-                  <span>
-                    12V & 24V vehicles
-                  </span>
-                </div>
-
-                {vehicleType ===
-                  "truck" && (
-                  <div className="selected-check">
-                    ✓
-                  </div>
-                )}
-
-              </button>
-
             </div>
-
           </section>
 
           {/* VOLTAGE */}
 
           {vehicleType && (
             <section className="form-section voltage-section">
-
               <div className="section-heading">
-
-                <div className="section-number">
-                  3
-                </div>
+                <div className="section-number">3</div>
 
                 <div>
-                  <h2>
-                    Vehicle electrical system
-                  </h2>
-
+                  <h2>Vehicle electrical system</h2>
                   <p>
-                    Oggy Garage supports
-                    both 12V and 24V vehicles.
+                    Voltage is automatically selected for your
+                    vehicle type.
                   </p>
                 </div>
-
               </div>
 
-              {/* MAIN HIGHLIGHT */}
-
               <div className="voltage-highlight">
-
                 <div className="voltage-title">
-                  ⚡{" "}
-                  <strong>
-                    12V & 24V Support
-                  </strong>
+                  ⚡ <strong>{voltage} Vehicle Support</strong>
                 </div>
 
                 <p>
-                  We specifically provide
-                  roadside assistance for
-                  compatible 12-volt and
-                  24-volt vehicle systems.
+                  {vehicleType === "car"
+                    ? "Doctor Motors provides 12V roadside assistance for cars. 24V is not available for cars."
+                    : "Doctor Motors provides 24V roadside assistance for trucks and commercial vehicles."}
                 </p>
-
               </div>
 
               <div className="voltage-options">
-
-                <button
-                  type="button"
-                  className={`voltage-card ${
-                    voltage ===
-                    "12V"
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    handleVoltageChange(
-                      "12V"
-                    )
-                  }
-                >
-                  <strong>
-                    12V
-                  </strong>
+                <div className="voltage-card selected">
+                  <strong>{voltage}</strong>
 
                   <span>
-                    Cars & compatible
-                    vehicles
+                    {vehicleType === "car"
+                      ? "Cars · 12V only"
+                      : "Trucks · 24V only"}
                   </span>
-                </button>
 
-                <button
-                  type="button"
-                  className={`voltage-card ${
-                    voltage ===
-                    "24V"
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    handleVoltageChange(
-                      "24V"
-                    )
-                  }
-                >
-                  <strong>
-                    24V
-                  </strong>
-
-                  <span>
-                    Commercial & heavy
-                    vehicles
-                  </span>
-                </button>
-
+                  <div className="selected-check">✓</div>
+                </div>
               </div>
-
             </section>
           )}
 
-          {/* BRAND */}
+          {/* VEHICLE BRAND */}
 
-          {vehicleType &&
-            voltage && (
-              <section className="form-section">
+          {vehicleType && voltage && (
+            <section className="form-section">
+              <div className="section-heading">
+                <div className="section-number">4</div>
 
-                <div className="section-heading">
-
-                  <div className="section-number">
-                    4
-                  </div>
-
-                  <div>
-                    <h2>
-                      Vehicle brand
-                    </h2>
-
-                    <p>
-                      Select your vehicle
-                      manufacturer.
-                    </p>
-                  </div>
-
+                <div>
+                  <h2>Vehicle brand</h2>
+                  <p>Select your vehicle manufacturer.</p>
                 </div>
+              </div>
 
-                <div className="brand-grid">
+              <div className="brand-grid">
+                {availableBrands.map((brand) => (
+                  <button
+                    type="button"
+                    key={brand}
+                    className={`brand-option ${
+                      vehicleBrand === brand ? "selected" : ""
+                    }`}
+                    onClick={() => {
+                      setVehicleBrand(brand);
+                      setService("");
+                    }}
+                  >
+                    {brand}
 
-                  {availableBrands.map(
-                    (brand) => (
-                      <button
-                        type="button"
-                        key={brand}
-                        className={`brand-option ${
-                          vehicleBrand ===
-                          brand
-                            ? "selected"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          setVehicleBrand(
-                            brand
-                          )
-                        }
-                      >
+                    {vehicleBrand === brand && <span>✓</span>}
+                  </button>
+                ))}
+              </div>
 
-                        {brand}
+              {vehicleType === "truck" && (
+                <div className="commercial-note">
+                  <strong>24V Commercial Vehicle Support</strong>
 
-                        {vehicleBrand ===
-                          brand && (
-                          <span>
-                            ✓
-                          </span>
-                        )}
-
-                      </button>
-                    )
-                  )}
-
+                  <p>
+                    Doctor Motors supports TATA, Ashok Leyland,
+                    Eicher, Mahindra and BharatBenz commercial
+                    vehicles.
+                  </p>
                 </div>
+              )}
 
-                {vehicleType ===
-                  "truck" && (
-                  <div className="commercial-note">
+              {vehicleType === "car" && (
+                <div className="commercial-note">
+                  <strong>12V Car Assistance</strong>
 
-                    <strong>
-                      Commercial vehicle
-                      support
-                    </strong>
-
-                    <p>
-                      We support TATA,
-                      Ashok Leyland,
-                      Eicher, Mahindra
-                      and BharatBenz
-                      trucks.
-                    </p>
-
-                  </div>
-                )}
-
-                {vehicleType ===
-                  "car" && (
-                  <div className="commercial-note">
-
-                    <strong>
-                      Car assistance
-                    </strong>
-
-                    <p>
-                      We provide roadside
-                      assistance for major
-                      car brands.
-                    </p>
-
-                  </div>
-                )}
-
-              </section>
-            )}
+                  <p>
+                    Roadside assistance for major car brands.
+                    Cars are supported on 12V only.
+                  </p>
+                </div>
+              )}
+            </section>
+          )}
 
           {/* SERVICE */}
 
           {vehicleBrand && (
             <section className="form-section">
-
               <div className="section-heading">
-
-                <div className="section-number">
-                  5
-                </div>
+                <div className="section-number">5</div>
 
                 <div>
-                  <h2>
-                    What happened?
-                  </h2>
-
-                  <p>
-                    Choose the problem
-                    you are facing.
-                  </p>
+                  <h2>What happened?</h2>
+                  <p>Choose the problem you are facing.</p>
                 </div>
-
               </div>
 
               <div className="service-grid">
+                {services.map((item) => (
+                  <button
+                    type="button"
+                    key={item.id}
+                    className={`service-card ${
+                      service === item.id ? "selected" : ""
+                    }`}
+                    onClick={() => setService(item.id)}
+                  >
+                    <div className="service-icon">{item.icon}</div>
 
-                {services.map(
-                  (item) => (
-                    <button
-                      type="button"
-                      key={item.id}
-                      className={`service-card ${
-                        service ===
-                        item.id
-                          ? "selected"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setService(
-                          item.id
-                        )
-                      }
-                    >
+                    <div>
+                      <strong>{item.title}</strong>
+                      <span>{item.description}</span>
+                    </div>
 
-                      <div className="service-icon">
-                        {item.icon}
-                      </div>
-
-                      <div>
-                        <strong>
-                          {item.title}
-                        </strong>
-
-                        <span>
-                          {item.description}
-                        </span>
-                      </div>
-
-                      {service ===
-                        item.id && (
-                        <div className="selected-check">
-                          ✓
-                        </div>
-                      )}
-
-                    </button>
-                  )
-                )}
-
+                    {service === item.id && (
+                      <div className="selected-check">✓</div>
+                    )}
+                  </button>
+                ))}
               </div>
-
             </section>
           )}
 
@@ -982,94 +711,56 @@ function Booking() {
 
           {service && (
             <section className="form-section">
-
               <div className="section-heading">
-
-                <div className="section-number">
-                  6
-                </div>
+                <div className="section-number">6</div>
 
                 <div>
-                  <h2>
-                    Your contact details
-                  </h2>
-
-                  <p>
-                    So our team can contact
-                    you.
-                  </p>
+                  <h2>Your contact details</h2>
+                  <p>So our team can contact you.</p>
                 </div>
-
               </div>
 
               <div className="input-grid">
-
                 <div className="input-group">
-
-                  <label>
-                    Your name
-                  </label>
+                  <label>Your name</label>
 
                   <input
                     type="text"
                     placeholder="Enter your name"
                     value={customerName}
-                    onChange={(e) =>
-                      setCustomerName(
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    required
                   />
-
                 </div>
 
                 <div className="input-group">
-
-                  <label>
-                    Mobile number
-                  </label>
+                  <label>Mobile number</label>
 
                   <input
                     type="tel"
                     placeholder="10-digit mobile number"
-                    maxLength="10"
+                    maxLength={10}
                     value={phone}
                     onChange={(e) =>
-                      setPhone(
-                        e.target.value.replace(
-                          /\D/g,
-                          ""
-                        )
-                      )
+                      setPhone(e.target.value.replace(/\D/g, ""))
                     }
+                    required
                   />
-
                 </div>
-
               </div>
 
               <div className="input-group full-input">
-
                 <label>
-                  Additional information{" "}
-                  <span>
-                    (optional)
-                  </span>
+                  Additional information <span>(optional)</span>
                 </label>
 
                 <textarea
                   placeholder="Tell us anything that may help our team..."
                   value={notes}
-                  onChange={(e) =>
-                    setNotes(
-                      e.target.value
-                    )
-                  }
-                  rows="4"
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={4}
                 />
-
               </div>
-
             </section>
           )}
 
@@ -1077,42 +768,28 @@ function Booking() {
 
           {service && (
             <div className="submit-area">
-
               <div className="submit-info">
-
-                <span>
-                  Need immediate help?
-                </span>
-
-                <a href="tel:+919699526233">
-                  Call {PHONE_NUMBER}
-                </a>
-
+                <span>Need immediate help?</span>
+                <a href={PHONE_LINK}>Call {PHONE_NUMBER}</a>
               </div>
 
-              <button
-                type="submit"
-                className="submit-button"
-              >
+              <button type="submit" className="submit-button">
                 Request Roadside Assistance
-                <span>
-                  →
-                </span>
+                <span>→</span>
               </button>
 
               <p className="privacy-note">
-                Your information is only
-                used to process your
-                roadside assistance request.
+                Your information is used to process your roadside
+                assistance request.
               </p>
-
             </div>
           )}
-
         </form>
 
-      </main>
+        {/* CENTERED BRAND FOOTER */}
 
+        <BrandFooter />
+      </main>
     </div>
   );
 }

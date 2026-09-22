@@ -2,6 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
+const GARAGE_LOCATION = {
+  latitude: 20.8904116,
+  longitude: 74.8341477,
+};
+
+const GARAGE_MAP_URL =
+  "https://www.google.com/maps?q=20.8904116,74.8341477";
+
 function Home() {
   const navigate = useNavigate();
 
@@ -14,6 +22,7 @@ function Home() {
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [locationError, setLocationError] = useState("");
 
+  // Convert GPS coordinates into a readable address
   const getLocationName = async (latitude, longitude) => {
     try {
       const response = await fetch(
@@ -30,7 +39,6 @@ function Home() {
       }
 
       const data = await response.json();
-
       const address = data.address || {};
 
       const parts = [
@@ -53,11 +61,11 @@ function Home() {
       return data.display_name || "Current location";
     } catch (error) {
       console.error("Reverse geocoding error:", error);
-
       return "Current location";
     }
   };
 
+  // Detect customer's current location
   const handleUseLocation = () => {
     setLocationError("");
 
@@ -96,6 +104,7 @@ function Home() {
           setLoadingLocation(false);
         }
       },
+
       (error) => {
         console.error("Geolocation error:", error);
 
@@ -119,6 +128,7 @@ function Home() {
           );
         }
       },
+
       {
         enableHighAccuracy: true,
         timeout: 15000,
@@ -127,25 +137,25 @@ function Home() {
     );
   };
 
+  // Handle manual location entry
   const handleLocationChange = (e) => {
     const value = e.target.value;
 
     setLocation(value);
     setLocationError("");
 
-    // Manual location doesn't have GPS coordinates
     setCoordinates({
       latitude: null,
       longitude: null,
     });
   };
 
+  // Send location to booking page
   const handleCheckAvailability = () => {
     if (!location.trim()) {
       setLocationError(
         "Please enter or select your location first."
       );
-
       return;
     }
 
@@ -155,13 +165,11 @@ function Home() {
       longitude: coordinates.longitude,
     };
 
-    // Save for backup
     localStorage.setItem(
       "oggyGarageLocation",
       JSON.stringify(locationData)
     );
 
-    // Send location to Booking page
     navigate("/booking", {
       state: {
         location: locationData,
@@ -169,6 +177,7 @@ function Home() {
     });
   };
 
+  // Book assistance
   const handleBookAssistance = () => {
     if (location.trim()) {
       handleCheckAvailability();
@@ -180,11 +189,11 @@ function Home() {
   return (
     <div className="home-page">
 
-      {/* HERO */}
+      {/* HERO SECTION */}
 
       <main className="hero-section">
 
-        {/* LEFT */}
+        {/* LEFT CONTENT */}
 
         <section className="hero-content">
 
@@ -197,9 +206,7 @@ function Home() {
             Vehicle
             <br />
             breakdown?
-            <span>
-              We've got you covered.
-            </span>
+            <span>We've got you covered.</span>
           </h1>
 
           <p className="hero-description">
@@ -219,13 +226,11 @@ function Home() {
               </div>
 
               <div>
-                <h3>
-                  Where are you stranded?
-                </h3>
+                <h3>Where are you stranded?</h3>
 
                 <p>
                   We currently serve locations within
-                  150 KM.
+                  150 KM of Doctor Motors.
                 </p>
               </div>
 
@@ -238,6 +243,7 @@ function Home() {
                 value={location}
                 onChange={handleLocationChange}
                 placeholder="Enter your location"
+                aria-label="Enter your current location"
               />
 
               <button
@@ -266,13 +272,9 @@ function Home() {
                 <span>✓</span>
 
                 <div>
-                  <strong>
-                    Location selected
-                  </strong>
+                  <strong>Location selected</strong>
 
-                  <small>
-                    {location}
-                  </small>
+                  <small>{location}</small>
                 </div>
 
               </div>
@@ -321,7 +323,7 @@ function Home() {
             <div className="circle circle-one"></div>
             <div className="circle circle-two"></div>
 
-            {/* COMMERCIAL */}
+            {/* COMMERCIAL VEHICLES */}
 
             <div className="floating-card commercial-card">
 
@@ -330,18 +332,13 @@ function Home() {
               </div>
 
               <div>
-                <strong>
-                  Commercial Vehicles
-                </strong>
-
-                <span>
-                  12V / 24V Support
-                </span>
+                <strong>Commercial Vehicles</strong>
+                <span>12V / 24V Support</span>
               </div>
 
             </div>
 
-            {/* CAR */}
+            {/* CARS */}
 
             <div className="floating-card car-card">
 
@@ -350,31 +347,21 @@ function Home() {
               </div>
 
               <div>
-                <strong>
-                  Cars
-                </strong>
-
-                <span>
-                  Major Brands Supported
-                </span>
+                <strong>Cars</strong>
+                <span>Major Brands Supported</span>
               </div>
 
             </div>
 
-            {/* GARAGE */}
+            {/* GARAGE CARD */}
 
             <div className="garage-card">
 
               <div className="garage-status"></div>
 
               <div>
-                <strong>
-                  Oggy Garage
-                </strong>
-
-                <span>
-                  Serving within 150 KM
-                </span>
+                <strong>Doctor Motors</strong>
+                <span>Personal Doctor of Your Vehicle</span>
               </div>
 
             </div>
@@ -385,15 +372,91 @@ function Home() {
 
       </main>
 
-      {/* VEHICLE SUPPORT */}
+      {/* GARAGE IDENTITY SECTION */}
+
+      <section className="garage-identity-section">
+
+        <div className="identity-card">
+
+          <div className="identity-header">
+
+            <span className="identity-label">
+              ABOUT OUR GARAGE
+            </span>
+
+            <h2>
+              DOCTOR <span>MOTORS</span>
+            </h2>
+
+            <p className="identity-tagline">
+              Personal Doctor of Your Vehicle
+            </p>
+
+          </div>
+
+          <div className="identity-divider"></div>
+
+          <div className="identity-info-grid">
+
+            {/* OWNER */}
+
+            <div className="identity-info-item">
+
+              <span className="identity-info-icon">
+                👨‍🔧
+              </span>
+
+              <div>
+                <small>Garage Owner</small>
+                <strong>Rehan</strong>
+              </div>
+
+            </div>
+
+            {/* GARAGE LOCATION */}
+
+            <div className="identity-info-item">
+
+              <span className="identity-info-icon">
+                📍
+              </span>
+
+              <div>
+                <small>Garage Location</small>
+
+                <strong>
+                  {GARAGE_LOCATION.latitude}° N,{" "}
+                  {GARAGE_LOCATION.longitude}° E
+                </strong>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* GOOGLE MAPS BUTTON */}
+
+          <a
+            href={GARAGE_MAP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="garage-location-link"
+          >
+            📍 Open Doctor Motors in Google Maps
+            <span>→</span>
+          </a>
+
+        </div>
+
+      </section>
+
+      {/* VEHICLE SUPPORT SECTION */}
 
       <section className="support-section">
 
         <div className="section-heading">
 
-          <span>
-            WHAT WE SUPPORT
-          </span>
+          <span>WHAT WE SUPPORT</span>
 
           <h2>
             Assistance for your
@@ -402,7 +465,7 @@ function Home() {
 
           <p>
             From everyday cars to heavy commercial
-            vehicles, Oggy Garage provides roadside
+            vehicles, Doctor Motors provides roadside
             assistance for both 12V and 24V electrical
             systems.
           </p>
@@ -419,9 +482,7 @@ function Home() {
               🚗
             </div>
 
-            <h3>
-              Cars
-            </h3>
+            <h3>Cars</h3>
 
             <p>
               Roadside assistance for cars across
@@ -434,7 +495,7 @@ function Home() {
 
           </div>
 
-          {/* COMMERCIAL */}
+          {/* COMMERCIAL VEHICLES */}
 
           <div className="support-card featured-support">
 
@@ -442,9 +503,7 @@ function Home() {
               🚛
             </div>
 
-            <h3>
-              Commercial Vehicles
-            </h3>
+            <h3>Commercial Vehicles</h3>
 
             <p>
               Support for commercial vehicles using
@@ -477,25 +536,11 @@ function Home() {
 
           <div className="brands-list">
 
-            <span>
-              TATA
-            </span>
-
-            <span>
-              ASHOK LEYLAND
-            </span>
-
-            <span>
-              EICHER
-            </span>
-
-            <span>
-              MAHINDRA
-            </span>
-
-            <span>
-              BHARAT BENZ
-            </span>
+            <span>TATA</span>
+            <span>ASHOK LEYLAND</span>
+            <span>EICHER</span>
+            <span>MAHINDRA</span>
+            <span>BHARAT BENZ</span>
 
           </div>
 
@@ -511,9 +556,7 @@ function Home() {
 
           <div>
 
-            <span>
-              IMPORTANT
-            </span>
+            <span>IMPORTANT</span>
 
             <h3>
               We work with both 12V & 24V vehicles
@@ -531,23 +574,19 @@ function Home() {
 
       </section>
 
-      {/* CTA */}
+      {/* CALL TO ACTION */}
 
       <section className="home-cta">
 
         <div>
 
-          <span>
-            NEED HELP ON THE ROAD?
-          </span>
+          <span>NEED HELP ON THE ROAD?</span>
 
-          <h2>
-            Don't stay stranded.
-          </h2>
+          <h2>Don't stay stranded.</h2>
 
           <p>
             Share your location and get roadside
-            assistance from Oggy Garage.
+            assistance from Doctor Motors.
           </p>
 
         </div>

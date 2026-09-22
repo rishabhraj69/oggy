@@ -1,0 +1,669 @@
+/* ========================================
+   DOCTOR MOTORS - AUTH MODAL
+======================================== */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.65);
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  overflow-y: auto;
+
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.auth-overlay *,
+.auth-overlay *::before,
+.auth-overlay *::after {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   AUTH MODAL
+======================================== */
+
+.auth-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 430px;
+
+  max-height: calc(100vh - 40px);
+
+  padding: 34px 35px 28px;
+
+  background: #ffffff;
+  border-radius: 20px;
+
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.22);
+
+  font-family: Georgia, "Times New Roman", serif;
+  color: #111827;
+
+  overflow-y: auto;
+
+  animation: authModalAppear 0.25s ease;
+}
+
+@keyframes authModalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========================================
+   CLOSE BUTTON
+======================================== */
+
+.auth-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #f1f5f9;
+  color: #64748b;
+
+  font-family: Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.auth-close:hover {
+  background: #e2e8f0;
+  color: #111827;
+
+  transform: rotate(90deg);
+}
+
+/* ========================================
+   HEADER
+======================================== */
+
+.auth-modal h2 {
+  margin: 0 35px 12px 0;
+
+  color: #111827;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.auth-modal > p {
+  margin: 0 0 18px;
+
+  color: #374151;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ========================================
+   ROLE SELECTOR
+======================================== */
+
+.auth-role-selector {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.auth-role-selector button {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #dbe3ef;
+  border-radius: 9px;
+
+  background: #f8fafc;
+  color: #475569;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.auth-role-selector button:hover {
+  border-color: #ef4444;
+  background: #fff7f7;
+}
+
+.auth-role-selector button.active {
+  border-color: #ef4444;
+
+  background: #fff1f1;
+  color: #dc2626;
+}
+
+/* ========================================
+   GARAGE REGISTRATION PROMPT
+======================================== */
+
+.auth-garage-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  width: 100%;
+  margin: 0 0 16px;
+
+  color: #111827;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.auth-garage-prompt span {
+  display: block;
+}
+
+/* Garage Registration Button */
+
+.auth-garage-prompt button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 44px;
+
+  margin: 0;
+  padding: 11px 15px;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  background: #fff1f1;
+  color: #dc2626;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.auth-garage-prompt button:hover {
+  border-color: #ef4444;
+
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* ========================================
+   FORGOT PASSWORD
+======================================== */
+
+.auth-forgot-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  width: 100%;
+
+  margin: -7px 0 13px;
+}
+
+.auth-forgot-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  padding: 4px 0;
+
+  border: none;
+
+  background: transparent;
+  color: #dc2626;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.auth-forgot-btn:hover {
+  background: transparent;
+
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+/* ========================================
+   FORM
+======================================== */
+
+.auth-modal form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
+
+  width: 100%;
+  margin: 0;
+}
+
+/* ========================================
+   INPUT FIELDS
+======================================== */
+
+.auth-modal form input {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+
+  margin: 0 0 10px;
+  padding: 0 13px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #111827;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.auth-modal form input::placeholder {
+  color: #7b8492;
+  opacity: 1;
+}
+
+.auth-modal form input:hover {
+  border-color: #94a3b8;
+}
+
+.auth-modal form input:focus {
+  border-color: #ef4444;
+
+  background: #ffffff;
+
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* ========================================
+   ERROR MESSAGE
+======================================== */
+
+.auth-error {
+  width: 100%;
+
+  margin: 2px 0 12px;
+  padding: 11px 12px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+  color: #b91c1c;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+/* ========================================
+   SUCCESS MESSAGE
+======================================== */
+
+.auth-success {
+  width: 100%;
+
+  margin: 2px 0 12px;
+  padding: 11px 12px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+
+  background: #f0fdf4;
+  color: #15803d;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+
+.auth-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 49px;
+
+  margin: 9px 0 0;
+  padding: 12px 16px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #ef3e42;
+  color: #ffffff;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  text-align: center;
+  white-space: normal;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: #dc2626;
+
+  box-shadow: 0 5px 15px rgba(239, 62, 66, 0.2);
+
+  transform: translateY(-1px);
+}
+
+.auth-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   LOGIN / SIGNUP SWITCH
+======================================== */
+
+.auth-switch {
+  display: flex;
+  flex-wrap: wrap;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  margin-top: 19px;
+
+  color: #64748b;
+
+  text-align: center;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.auth-switch button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 0 0 3px;
+  padding: 2px 3px;
+
+  border: none;
+
+  background: transparent;
+  color: #dc2626;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.auth-switch button:hover {
+  background: transparent;
+
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.auth-footer {
+  margin-top: 19px;
+
+  color: #94a3b8;
+
+  text-align: center;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 11px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 480px) {
+  .auth-overlay {
+    padding: 14px;
+  }
+
+  .auth-modal {
+    width: 100%;
+    max-width: 100%;
+
+    max-height: calc(100vh - 28px);
+
+    padding: 30px 22px 24px;
+
+    border-radius: 16px;
+  }
+
+  .auth-modal h2 {
+    font-size: 24px;
+  }
+
+  .auth-modal > p {
+    font-size: 14px;
+  }
+
+  .auth-role-selector button {
+    min-height: 42px;
+    font-size: 13px;
+  }
+
+  .auth-modal form input {
+    height: 46px;
+    font-size: 14px;
+  }
+
+  .auth-submit {
+    min-height: 47px;
+  }
+}
+
+/* ========================================
+   SMALL HEIGHT SCREENS
+======================================== */
+
+@media (max-height: 600px) {
+  .auth-overlay {
+    align-items: flex-start;
+  }
+
+  .auth-modal {
+    margin: auto 0;
+  }
+}
+/* ========================================
+   FIX: REGISTER YOUR GARAGE BUTTON
+======================================== */
+
+/* Remove default browser button appearance */
+.auth-modal button[type="button"] {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Garage registration button */
+.auth-modal button[type="button"]:not(.auth-close):not(.auth-forgot-btn):not(.auth-role-selector button):not(.auth-switch button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 46px;
+
+  margin: 8px 0 14px;
+  padding: 12px 16px;
+
+  background: #fff1f1;
+  color: #dc2626;
+
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+
+  line-height: 1.4;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.auth-modal button[type="button"]:not(.auth-close):not(.auth-forgot-btn):not(.auth-role-selector button):not(.auth-switch button):hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+/* Keep login/signup switch buttons normal */
+.auth-modal .auth-switch button {
+  width: auto;
+  min-height: auto;
+  margin: 0 0 0 4px;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+  color: #dc2626;
+}
+/* ========================================
+   FORGOT PASSWORD
+======================================== */
+
+.auth-forgot-password {
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 0 14px;
+}
+
+.auth-forgot-password button {
+  background: transparent;
+  border: none;
+  color: #ef343b;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.auth-forgot-password button:hover {
+  color: #c91f28;
+  text-decoration: underline;
+}
+
+.auth-forgot-password button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Back to Login button */
+
+.auth-switch button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
