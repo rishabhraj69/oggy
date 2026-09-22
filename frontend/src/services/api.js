@@ -2,8 +2,7 @@
 // API CONFIGURATION
 // ========================================
 
-const API_BASE_URL = "http://localhost:5000/api";
-
+const API_BASE_URL = "https://doctor-motors-api.onrender.com/api";
 // ========================================
 // COMMON API REQUEST
 // ========================================
